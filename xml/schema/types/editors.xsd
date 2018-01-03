@@ -1556,7 +1556,7 @@
       <xs:attribute name="degrees" type="xs:integer"></xs:attribute>
       <xs:attribute name="class" type="classType" use="required"></xs:attribute>
 
-       <xs:attributeGroup ref="EditorCommonAttributesGroup"></xs:attributeGroup>
+      <xs:attributeGroup ref="EditorCommonAttributesGroup"></xs:attributeGroup>
     </xs:complexType>
 
     <xs:complexType name="EditorSlipTurnoutTconType">
@@ -1621,7 +1621,8 @@
 
       <xs:attribute name="class" type="classType" use="required"></xs:attribute>
 
-       <xs:attributeGroup ref="EditorCommonAttributesGroup"></xs:attributeGroup>
+      <xs:attributeGroup ref="EditorCommonAttributesGroup"></xs:attributeGroup>
+      <xs:attributeGroup ref="EditorCommonTextInfoGroup"></xs:attributeGroup>
     </xs:complexType>
 
     <xs:complexType name="EditorIndicatorTurnoutIconType">
@@ -1725,7 +1726,7 @@
       <xs:attribute name="degrees" type="xs:integer"></xs:attribute>
       <xs:attribute name="class" type="classType" use="required"></xs:attribute>
 
-       <xs:attributeGroup ref="EditorCommonAttributesGroup"></xs:attributeGroup>
+      <xs:attributeGroup ref="EditorCommonAttributesGroup"></xs:attributeGroup>
     </xs:complexType>
 
     <xs:complexType name="EditorPortalIconType">

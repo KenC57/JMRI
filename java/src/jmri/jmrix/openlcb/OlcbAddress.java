@@ -8,7 +8,6 @@ import org.openlcb.EventID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
-import javax.annotation.CheckReturnValue;
 
 /**
  * Utilities for handling OpenLCB event messages as addresses.
@@ -42,6 +41,20 @@ public class OlcbAddress {
 
     static final int NODEFACTOR = 100000;
 
+    /** 
+     * Construct from OlcbEvent
+     *
+     */
+    public OlcbAddress(EventID e) {
+        byte[] contents = e.getContents();
+        aFrame = new int[contents.length];
+        int i = 0;
+        for (byte b : contents) {
+            aFrame[i++] = b;
+        }
+        aString = toCanonicalString();
+    }
+    
     /**
      * Construct from string without leading system or type letters
      * @param s hex coded string of address

@@ -1,11 +1,8 @@
 package jmri.jmrix.easydcc.easydccmon;
 
 import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import jmri.jmrix.easydcc.EasyDccListener;
 import jmri.jmrix.easydcc.EasyDccMessage;
 import jmri.jmrix.easydcc.EasyDccReply;
-import jmri.jmrix.easydcc.EasyDccTrafficController;
 import jmri.jmrix.easydcc.EasyDccSystemConnectionMemo;
 import org.junit.After;
 import org.junit.Assert;
@@ -72,6 +69,6 @@ public class EasyDccMonFrameTest {
        jmri.util.JUnitUtil.tearDown();
     }
 
-    private final static Logger log = LoggerFactory.getLogger(EasyDccMonFrameTest.class);
+    // private final static Logger log = LoggerFactory.getLogger(EasyDccMonFrameTest.class);
 
 }

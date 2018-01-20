@@ -32,14 +32,16 @@ public class TextItemPanel extends ItemPanel /*implements ActionListener */ {
     DecoratorPanel _decorator;
 
     public TextItemPanel(ItemPalette parentFrame, String type, Editor editor) {
-        super((ItemPalette) parentFrame, type, editor);
+        super(parentFrame, type, editor);
         setToolTipText(Bundle.getMessage("ToolTipDragText"));
     }
 
     @Override
     public void init() {
         if (!_initialized) {
-            if (!jmri.util.ThreadingUtil.isGUIThread()) log.error("Not on GUI thread", new Exception("traceback"));
+            if (!jmri.util.ThreadingUtil.isGUIThread()) {
+                log.error("Not on GUI thread", new Exception("traceback"));
+            }
             Thread.yield();
             JPanel blurb = new JPanel();
             blurb.setLayout(new BoxLayout(blurb, BoxLayout.Y_AXIS));
@@ -94,7 +96,7 @@ public class TextItemPanel extends ItemPanel /*implements ActionListener */ {
             try {
                 dataFlavor = new DataFlavor(Editor.POSITIONABLE_FLAVOR);
             } catch (ClassNotFoundException cnfe) {
-                cnfe.printStackTrace();
+                log.error("Unable to find class supporting {}", Editor.POSITIONABLE_FLAVOR, cnfe);
             }
         }
 

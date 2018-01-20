@@ -6,7 +6,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -56,7 +54,7 @@ public class SignalMastItemPanel extends TableItemPanel implements ListSelection
             _table.getSelectionModel().addListSelectionListener(this);
             _showIconsButton.setEnabled(false);
             _showIconsButton.setToolTipText(Bundle.getMessage("ToolTipPickRowToShowIcon"));
-            initIconFamiliesPanel();
+//            initIconFamiliesPanel();
             add(_iconFamilyPanel, 1);
         }
     }
@@ -137,7 +135,7 @@ public class SignalMastItemPanel extends TableItemPanel implements ListSelection
             label.setOpaque(false);
             label.setToolTipText(Bundle.getMessage("ToolTipDragIcon"));
         } catch (java.lang.ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
+            log.error("Unable to find class supporting {}", Editor.POSITIONABLE_FLAVOR, cnfe);
             label = new JLabel();
         }
         label.setName(borderName);
@@ -190,7 +188,7 @@ public class SignalMastItemPanel extends TableItemPanel implements ListSelection
             _family = null;
             return;
         }
-        
+
         try {
             _mast = InstanceManager.getDefault(jmri.SignalMastManager.class).provideSignalMast(bean.getDisplayName());
         } catch (IllegalArgumentException ex) {
@@ -210,7 +208,7 @@ public class SignalMastItemPanel extends TableItemPanel implements ListSelection
                     s = s.substring(s.indexOf("resources"));
                 }
                 NamedIcon n = new NamedIcon(s, s);
-                _currentIconMap.put(aspect, n);                
+                _currentIconMap.put(aspect, n);
             }
         }
         if (log.isDebugEnabled()) {
@@ -316,7 +314,7 @@ public class SignalMastItemPanel extends TableItemPanel implements ListSelection
                 sb.append("\"");
                 return sb.toString();
             }
-            return null;                
+            return null;
         }
     }
 

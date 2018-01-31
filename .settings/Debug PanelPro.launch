@@ -12,8 +12,8 @@
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="apps.PanelPro.PanelPro"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-Djava.security.policy=${project_path}/lib/security.policy -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Dapple.awt.graphics.EnableQ2DX=true -Dlog4j.ignoreTCL=true -Dfile.encoding=UTF-8 -Djinput.plugins=net.bobis.jinput.hidraw.HidRawEnvironmentPlugin -Dpurejavacomm.loglevel=0 PanelProConfig2.xml"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-Djava.security.policy=./lib/security.policy&#13;&#10;-Dapple.laf.useScreenMenuBar=true &#13;&#10;-Dapple.awt.graphics.UseQuartz=true &#13;&#10;-Dapple.awt.graphics.EnableQ2DX=true &#13;&#10;-Dlog4j.ignoreTCL=true &#13;&#10;-Dfile.encoding=UTF-8 &#13;&#10;-Djinput.plugins=net.bobis.jinput.hidraw.HidRawEnvironmentPlugin &#13;&#10;-Dpurejavacomm.loglevel=0 PanelProConfig2.xml"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jmri"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms256m -Xmx640m"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms256m&#13;&#10;-Xmx640m&#13;&#10;-Djogamp.gluegen.UseTempJarCache=false"/>
 </launchConfiguration>

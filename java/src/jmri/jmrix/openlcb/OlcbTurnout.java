@@ -1,5 +1,8 @@
 package jmri.jmrix.openlcb;
 
+import java.util.Timer;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import jmri.NamedBean;
 import jmri.Turnout;
@@ -9,8 +12,6 @@ import org.openlcb.implementations.EventTable;
 import org.openlcb.implementations.VersionedValueListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
-import javax.annotation.CheckReturnValue;
 
 /**
  * Turnout for OpenLCB connections.
@@ -53,6 +54,8 @@ public class OlcbTurnout extends jmri.implementation.AbstractTurnout {
     private static final int[] validFeedbackModes = {MONITORING, ONESENSOR, TWOSENSOR, DIRECT};
     private static final int validFeedbackTypes = MONITORING | ONESENSOR | TWOSENSOR | DIRECT;
     private static final int defaultFeedbackType = MONITORING;
+    static int ON_TIME = 125; // time that turnout is active after being tripped
+    Timer timer = null;
 
     protected OlcbTurnout(String prefix, String address, OlcbInterface iface) {
         super(prefix + "T" + address);
@@ -78,6 +81,11 @@ public class OlcbTurnout extends jmri.implementation.AbstractTurnout {
             return;
         }
         switch (v.length) {
+            case 1:
+                // momentary sensor
+                addrThrown = v[0];
+                addrClosed = null;
+                break;
             case 2:
                 addrThrown = v[0];
                 addrClosed = v[1];
@@ -98,32 +106,45 @@ public class OlcbTurnout extends jmri.implementation.AbstractTurnout {
         if (pc != null) pc.release();
         turnoutListener = null;
         pc = null;
-
         int flags = 0;
-        switch (_activeFeedbackType) {
-            case MONITORING:
-            default:
-                flags = BitProducerConsumer.IS_PRODUCER | BitProducerConsumer.IS_CONSUMER |
-                        BitProducerConsumer.LISTEN_EVENT_IDENTIFIED | BitProducerConsumer
-                        .QUERY_AT_STARTUP;
-                break;
-            case DIRECT:
-                flags = BitProducerConsumer.IS_PRODUCER;
-                break;
-        }
-        flags = OlcbUtils.overridePCFlagsFromProperties(this, flags);
-        pc = new BitProducerConsumer(iface, addrThrown.toEventID(), addrClosed.toEventID(), flags);
+
+        if (addrClosed == null) {
+            pc = new BitProducerConsumer(iface, addrThrown.toEventID(), BitProducerConsumer.nullEvent, flags);
+            timer = new Timer(true);
+        } else {
+            switch (_activeFeedbackType) {
+                case MONITORING:
+                default:
+                    flags = BitProducerConsumer.IS_PRODUCER | BitProducerConsumer.IS_CONSUMER |
+                            BitProducerConsumer.LISTEN_EVENT_IDENTIFIED | BitProducerConsumer
+                            .QUERY_AT_STARTUP;
+                    break;
+                case DIRECT:
+                    flags = BitProducerConsumer.IS_PRODUCER;
+                    break;
+            }
+            flags = OlcbUtils.overridePCFlagsFromProperties(this, flags);
+            pc = new BitProducerConsumer(iface, addrThrown.toEventID(), addrClosed.toEventID(), flags);
+        }       
         turnoutListener = new VersionedValueListener<Boolean>(pc.getValue()) {
             @Override
             public void update(Boolean value) {
                 int s = value ? THROWN : CLOSED;
-                if (_activeFeedbackType != DIRECT) {
+                if (addrClosed == null) {
                     newCommandedState(s);
-                    if (_activeFeedbackType == MONITORING) {
-                        newKnownState(s);
+                    newKnownState(s);
+                    if (value) {
+                        setTimeout();
+                    }
+                } else {
+                    if (_activeFeedbackType != DIRECT) {
+                        newCommandedState(s);
+                        if (_activeFeedbackType == MONITORING) {
+                            newKnownState(s);
+                        }
                     }
                 }
-            }
+            };
         };
         if (thrownEventTableEntryHolder != null) {
             thrownEventTableEntryHolder.release();
@@ -134,7 +155,9 @@ public class OlcbTurnout extends jmri.implementation.AbstractTurnout {
             closedEventTableEntryHolder = null;
         }
         thrownEventTableEntryHolder = iface.getEventTable().addEvent(addrThrown.toEventID(), getEventName(true));
-        closedEventTableEntryHolder = iface.getEventTable().addEvent(addrClosed.toEventID(), getEventName(false));
+        if (addrClosed != null) {
+            closedEventTableEntryHolder = iface.getEventTable().addEvent(addrClosed.toEventID(), getEventName(false));
+        }
     }
 
     /**
@@ -166,6 +189,20 @@ public class OlcbTurnout extends jmri.implementation.AbstractTurnout {
         }
     }
 
+    /**
+     * Have turnout return to closed after delay, used if no closed event was
+     * specified
+     */
+    void setTimeout() {
+        timer.schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                forwardCommandChangeToLayout(Turnout.CLOSED);
+            }
+        }, ON_TIME);
+    }
+
+
     @Override
     public void setFeedbackMode(int mode) throws IllegalArgumentException {
         boolean recreate = (mode != _activeFeedbackType) && (pc != null);
@@ -195,6 +232,9 @@ public class OlcbTurnout extends jmri.implementation.AbstractTurnout {
             turnoutListener.setFromOwnerWithForceNotify(true);
             if (_activeFeedbackType == MONITORING) {
                 newKnownState(THROWN);
+            }
+            if (addrClosed == null) {
+                setTimeout();
             }
         } else if (s == Turnout.CLOSED) {
             turnoutListener.setFromOwnerWithForceNotify(false);
@@ -307,6 +347,7 @@ public class OlcbTurnout extends jmri.implementation.AbstractTurnout {
      * 
      * Sorts by decoded EventID(s)
      */
+    @Override
     @CheckReturnValue
     public int compareSystemNameSuffix(@Nonnull String suffix1, @Nonnull String suffix2, @Nonnull jmri.NamedBean n) {
         return OlcbSystemConnectionMemo.compareSystemNameSuffix(suffix1, suffix2);

@@ -2,12 +2,11 @@ package jmri.jmrix.openlcb;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import jmri.BooleanPropertyDescriptor;
 import jmri.JmriException;
 import jmri.NamedBean;
 import jmri.NamedBeanPropertyDescriptor;
 import jmri.Turnout;
-import jmri.BooleanPropertyDescriptor;
 import jmri.jmrix.can.CanSystemConnectionMemo;
 import jmri.managers.AbstractTurnoutManager;
 import org.openlcb.OlcbInterface;
@@ -152,10 +151,7 @@ public class OlcbTurnoutManager extends AbstractTurnoutManager {
         }
         switch (v.length) {
             case 1:
-                if (address.startsWith("+") || address.startsWith("-")) {
-                    break;
-                }
-                throw new IllegalArgumentException("can't make 2nd event from systemname " + address);
+                break;
             case 2:
                 break;
             default:

@@ -40,8 +40,8 @@ public class OlcbTurnoutManager extends AbstractTurnoutManager {
     }
 
     @Override
-    public List<NamedBeanPropertyDescriptor> getKnownBeanProperties() {
-        List<NamedBeanPropertyDescriptor> l = new ArrayList<>();
+    public List<NamedBeanPropertyDescriptor<?>> getKnownBeanProperties() {
+        List<NamedBeanPropertyDescriptor<?>> l = new ArrayList<>();
         l.add(new BooleanPropertyDescriptor(OlcbUtils.PROPERTY_IS_AUTHORITATIVE, OlcbTurnout
                 .DEFAULT_IS_AUTHORITATIVE) {
             @Override
